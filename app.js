@@ -24,6 +24,7 @@ function operate(operator, first, second){
             return multiply(first, second);
         
         case "/":
+            if (second === 0) return "Error dividir por cero"
             return divide(first, second);
         
     }
@@ -44,20 +45,31 @@ buttons.forEach((button) => {
         if (button.textContent === "C") {
             screenUnder.textContent = ''; //clear button
             screenAbove.textContent = '';
+            count = 0;
         }
     });
 });
 
 // logica de los operator
+// logica de los operator
+let acumulator = 0;
+let count = 0;
 
 const operatorButton = document.querySelectorAll('.operator-btn')
 operatorButton.forEach((button) => {
     // and for each one we add a 'click' listener
     button.addEventListener('click', () => {
-        screenAbove.textContent = screenUnder.textContent;
-        screenUnder.textContent = '';
-        firstNumberCalculator = parseInt(screenAbove.textContent.slice(0,-1))
+        
+        if (count === 0) {
+            firstNumberCalculator = parseFloat(screenUnder.textContent.slice(0,-1));
+            acumulator = firstNumberCalculator;
+            count += 1;
+        } else {
+            acumulator = operate(operatorCalculator, acumulator, parseFloat(screenUnder.textContent.slice(0,-1)));
+        }
         operatorCalculator = button.textContent;
+        screenAbove.textContent += screenUnder.textContent;
+        screenUnder.textContent = '';
     });
 });
 
@@ -66,8 +78,8 @@ resolveButton.forEach((button) => {
     // and for each one we add a 'click' listener
     button.addEventListener('click', () => {
         screenAbove.textContent += screenUnder.textContent;
-        secondNumberCalculator = parseInt(screenUnder.textContent.slice(0,-1))
+        secondNumberCalculator = parseFloat(screenUnder.textContent.slice(0,-1))
         screenUnder.textContent = '';
-        screenUnder.textContent = operate(operatorCalculator,firstNumberCalculator,secondNumberCalculator);
+        screenUnder.textContent = Math.round(operate(operatorCalculator,acumulator,secondNumberCalculator));
     });
 });
